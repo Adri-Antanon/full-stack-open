@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import List from './components/List';
-
-import Note from './components/Note';
 
 import personServices from './services/persons';
 
@@ -52,27 +49,39 @@ const App = () => {
   //   });
   // };
 
-  // const handleNoteChange = (event) => {
-  //   setNewNote(event.target.value);
-  // };
-
-  // const notesToShow = showAll ? notes : notes.filter((note) => note.important);
-
   const addPerson = (event) => {
     event.preventDefault();
-    const baseUrl = 'http://localhost:3001/persons';
     const personObject = {
       name: newName,
       number: newPhone,
       id: (persons.length + 1).toString(),
     };
 
-    const isDuplicated = persons.find(
+    const duplicatedPerson = persons.find(
       (person) =>
         person.name.toLocaleLowerCase() === newName.toLocaleLowerCase(),
     );
-    if (isDuplicated) {
-      alert(`${newName} is already added to phonebook`);
+    if (duplicatedPerson) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`,
+        )
+      ) {
+        setNewName('');
+        setNewPhone('');
+
+        const updatedPerson = { ...duplicatedPerson, number: newPhone };
+        personServices
+          .update(updatedPerson.id, updatedPerson)
+          .then((updatePerson) => {
+            setPersons(
+              persons.map((p) =>
+                p.id !== updatedPerson.id ? p : updatePerson,
+              ),
+            );
+          });
+      }
+
       return;
     }
     setNewName('');
