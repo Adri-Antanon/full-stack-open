@@ -63,8 +63,8 @@ const App = () => {
     const baseUrl = 'http://localhost:3001/persons';
     const personObject = {
       name: newName,
-      phone: newPhone,
-      id: persons.length + 1,
+      number: newPhone,
+      id: (persons.length + 1).toString(),
     };
 
     const isDuplicated = persons.find(
@@ -85,7 +85,12 @@ const App = () => {
   const handleNameChange = (event) => setNewName(event.target.value);
   const handlePhoneChange = (event) => setNewPhone(event.target.value);
   const handleSearchChange = (event) => setSearchPerson(event.target.value);
-
+  const handleDeletePerson = (id, name) => {
+    if (window.confirm(`Do you want to delete ${name}?`)) {
+      setPersons(persons.filter((n) => n.id !== id));
+      personServices.deletePerson(id);
+    }
+  };
   const filterPersonList = persons.filter((person) =>
     person.name.toLocaleLowerCase().includes(searchPerson.toLocaleLowerCase()),
   );
@@ -104,7 +109,7 @@ const App = () => {
         onPhoneChange={handlePhoneChange}
       />
       <h2>Numbers</h2>
-      <List persons={filterPersonList} />
+      <List onDelete={handleDeletePerson} persons={filterPersonList} />
     </div>
   );
 };
