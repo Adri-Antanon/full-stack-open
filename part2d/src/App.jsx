@@ -7,18 +7,19 @@ import List from './components/List';
 
 import Note from './components/Note';
 
-import noteServices from './services/notes';
+import personServices from './services/persons';
 
 const App = () => {
-  // const [notes, setNotes] = useState([]);
-  // const [newNote, setNewNote] = useState('');
-  // const [showAll, setShowAll] = useState(false);
+  const [persons, setPersons] = useState([]);
+  const [searchPerson, setSearchPerson] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPhone, setNewPhone] = useState('');
 
-  // useEffect(() => {
-  //   noteServices.getAll().then((initialNotes) => {
-  //     setNotes(initialNotes);
-  //   });
-  // }, []);
+  useEffect(() => {
+    personServices.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   // const toggleImportanceOf = (id) => {
   //   const note = notes.find((n) => n.id === id);
@@ -57,13 +58,6 @@ const App = () => {
 
   // const notesToShow = showAll ? notes : notes.filter((note) => note.important);
 
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', phone: '933445543', id: 1 },
-  ]);
-  const [searchPerson, setSearchPerson] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-
   const addPerson = (event) => {
     event.preventDefault();
     const baseUrl = 'http://localhost:3001/persons';
@@ -83,9 +77,9 @@ const App = () => {
     }
     setNewName('');
     setNewPhone('');
-    axios
-      .post(baseUrl, personObject)
-      .then((response) => setPersons(persons.concat(response.data)));
+    personServices
+      .create(personObject)
+      .then((newPerson) => setPersons(persons.concat(newPerson)));
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);
